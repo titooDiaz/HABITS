@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 # Configuración de la aplicación
 app = Flask(__name__)
@@ -67,6 +68,10 @@ def delete(id):
 # Punto de entrada
 # Entry point
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))  # Usamos el puerto desde la variable de entorno
+    app.run(host='0.0.0.0', port=port)
+
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+    
