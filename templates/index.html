@@ -9,26 +9,45 @@
     <h1>Lista de Tareas</h1>
     <a href="/create">Crear Nueva Tarea</a>
     <ul>
+
         {% for task in tasks %}
-            <li>
-                <strong>{{ task.name }} {{task.id}}</strong> - {{ task.description }} (Frecuencia: {{ task.frequency }})
+            <div>
+                <h2>{{ task.name }}</h2>
+                <p>{{ task.description }}</p>
+                <p><strong>Frecuencia:</strong> {{ task.frequency }}</p>
+                <p><strong>Creado el:</strong> {{ task.created_at }}</p>
+
+                <br>
+
                 <a href="/edit/{{ task.id }}">Editar</a>
                 <form action="/delete/{{ task.id }}" method="POST" style="display:inline;">
                     <button type="submit">Eliminar</button>
                 </form>
-                <br>
+
+                <h3>Completas: (hoy)</h3>
                 <ul>
-                    {% for i in range(task.frequency) %}
+                    {% for i in range(task.frequency - task.dailies | length) %}
                         <li>
-                            <!-- Botón para crear un nuevo lugar (TaskDaily) relacionado con esta tarea -->
+                            <!-- Botón para crear una nueva tarea diaria -->
                             {{ i + 1 }} 
                             <form action="/create_lugar/{{ task.id }}" method="POST" style="display:inline;">
-                                <button type="submit">Crear Lugar {{ i + 1 }}</button>
+                                <button type="submit">Hecho? {{ i + 1 }}</button>
                             </form>
                         </li>
                     {% endfor %}
+                    
+                    <!-- Mostrar las tareas diarias existentes -->
+                    {% for daily in task.dailies %}
+                        <li>
+                            <strong>Fecha de Creación:</strong> {{ daily.created_at }}
+                        </li>
+                    {% else %}
+                        <li>No hay tareas diarias asociadas.</li>
+                    {% endfor %}
                 </ul>
-            </li>
+            </div>
+        {% else %}
+            <p>No hay tareas disponibles.</p>
         {% endfor %}
 
     </ul>
