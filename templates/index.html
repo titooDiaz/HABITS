@@ -10,14 +10,27 @@
     <a href="/create">Crear Nueva Tarea</a>
     <ul>
         {% for task in tasks %}
-        <li>
-            <strong>{{ task.name }}</strong> - {{ task.description }} (Frecuencia: {{ task.frequency }})
-            <a href="/edit/{{ task.id }}">Editar</a>
-            <form action="/delete/{{ task.id }}" method="POST" style="display:inline;">
-                <button type="submit">Eliminar</button>
-            </form>
-        </li>
+            <li>
+                <strong>{{ task.name }} {{task.id}}</strong> - {{ task.description }} (Frecuencia: {{ task.frequency }})
+                <a href="/edit/{{ task.id }}">Editar</a>
+                <form action="/delete/{{ task.id }}" method="POST" style="display:inline;">
+                    <button type="submit">Eliminar</button>
+                </form>
+                <br>
+                <ul>
+                    {% for i in range(task.frequency) %}
+                        <li>
+                            <!-- Botón para crear un nuevo lugar (TaskDaily) relacionado con esta tarea -->
+                            {{ i + 1 }} 
+                            <form action="/create_lugar/{{ task.id }}" method="POST" style="display:inline;">
+                                <button type="submit">Crear Lugar {{ i + 1 }}</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
         {% endfor %}
+
     </ul>
 </body>
 </html>
