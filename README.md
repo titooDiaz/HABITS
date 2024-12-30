@@ -19,7 +19,7 @@ La disciplina es la clave del éxito personal y profesional. Con esta herramient
 - **Flask**: Framework para el backend.  
 - **HTML/CSS/JavaScript**: Para la interfaz de usuario.  
 - **SQLite**: Base de datos ligera y fácil de usar.  
-- **Tailwind CSS** (si aplicas alguno): Para el diseño responsivo.  
+- **Tailwind CSS**: Para el diseño responsivo.  
 
 ## Instalación 🚀  
 
@@ -30,7 +30,7 @@ La disciplina es la clave del éxito personal y profesional. Con esta herramient
 ### Pasos  
 1. Clona este repositorio:  
    ```bash  
-   git clone https://github.com/tuusuario/nombre-repo.git  
+   git clone https://github.com/titooDiaz/HABITS.git
    cd nombre-repo  
    ```  
 2. Crea un entorno virtual:  
