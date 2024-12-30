@@ -122,6 +122,7 @@ def delete(id):
     return redirect(url_for('index'))
 
 
+
 # Punto de entrada
 # Entry point
 if __name__ == '__main__':

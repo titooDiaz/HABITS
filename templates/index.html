@@ -26,16 +26,7 @@
 
                 <h3>Completas: (hoy)</h3>
                 <ul>
-                    {% for i in range(task.frequency - task.dailies | length) %}
-                        <li>
-                            <!-- Botón para crear una nueva tarea diaria -->
-                            {{ i + 1 }} 
-                            <form action="/create_lugar/{{ task.id }}" method="POST" style="display:inline;">
-                                <button type="submit">Hecho? {{ i + 1 }}</button>
-                            </form>
-                        </li>
-                    {% endfor %}
-                    
+
                     <!-- Mostrar las tareas diarias existentes -->
                     {% for daily in task.dailies %}
                         <li>
@@ -44,6 +35,17 @@
                     {% else %}
                         <li>No hay tareas diarias asociadas.</li>
                     {% endfor %}
+
+                    {% for i in range(task.frequency - (task.dailies | length)) %}
+                        <li>
+                            <!-- Botón para crear una nueva tarea diaria -->
+                            {{ i + 1 + (task.dailies | length)}}
+                            <form action="/create_lugar/{{ task.id }}" method="POST" style="display:inline;">
+                                <button type="submit">Hecho? </button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                    
                 </ul>
             </div>
         {% else %}
