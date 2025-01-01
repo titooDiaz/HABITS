@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
 from flask import Flask, render_template, redirect, url_for
+from itertools import groupby
+import pytz
 
 
 
@@ -28,12 +30,14 @@ db = SQLAlchemy(app)
 from datetime import datetime
 from sqlalchemy import func
 
+bogota_tz = pytz.timezone("America/Bogota")
+
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Llave primaria
     name = db.Column(db.String(50), nullable=False)  # Campo obligatorio
     description = db.Column(db.String(120), nullable=False)  # Descripción obligatoria
     frequency = db.Column(db.Integer, nullable=False)  # Frecuencia obligatoria
-    created_at = db.Column(db.DateTime, default=func.now())  # Fecha de creación automática
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(bogota_tz))
 
     def __repr__(self):
         return f"<Task {self.name}>"
@@ -42,7 +46,7 @@ class TaskDaily(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     idTask = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
     task = db.relationship(Task, backref='dailies', lazy=True)
-    created_at = db.Column(db.DateTime, default=func.now())
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(bogota_tz))
 
     def __repr__(self):
         return f"<TaskDaily {self.idTask}>"
@@ -59,7 +63,30 @@ class TaskDaily(db.Model):
 @app.route('/')
 def index():
     tasks = Task.query.all()
-    return render_template('index.html', tasks=tasks)
+
+    # Agrupar tareas diarias por fecha
+    all_dailies = [daily for task in tasks for daily in task.dailies]
+
+    # Ajustar las fechas a la zona horaria de Bogotá
+    bogota_tz = pytz.timezone("America/Bogota")
+    for daily in all_dailies:
+        daily.created_at = daily.created_at.astimezone(bogota_tz)
+
+    # Ordenar y agrupar las tareas por fecha
+    sorted_dailies = sorted(all_dailies, key=lambda x: x.created_at.date())
+    tasks_by_date = {
+        date: list(dailies)
+        for date, dailies in groupby(sorted_dailies, key=lambda x: x.created_at.date())
+    }
+
+    # Formatear las fechas para el template
+    tasks_by_date_formatted = {
+        date.strftime("%d/%m/%Y"): dailies for date, dailies in tasks_by_date.items()
+    }
+
+    return render_template("index.html", tasks=tasks, tasks_by_date=tasks_by_date_formatted)
+
+
 
 
 @app.route("/create_lugar/<int:task_id>", methods=["POST"])
