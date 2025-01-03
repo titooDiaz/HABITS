@@ -5,9 +5,12 @@ import pytz
 import os
 from itertools import groupby
 from datetime import date
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo
-from flask_wtf import FlaskForm
+
+# passwords hash
+from werkzeug.security import generate_password_hash
+
+# impor forms
+from forms import LoginForm, RegisterForm
 
 
 ########################################################################################
@@ -16,15 +19,8 @@ from flask_wtf import FlaskForm
 app.secret_key = "Habits2025"
 
 # users manager
-class RegisterForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Register')
 
 # Ruta de Registro
-from werkzeug.security import generate_password_hash
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
@@ -41,16 +37,6 @@ def register():
             flash("Registration successful!", "success")
             return redirect(url_for('login'))  # Redirigir a login después de registrarse
     return render_template('users/register.html', form=form)
-
-
-# Ruta de inicio de sesión
-from werkzeug.security import check_password_hash
-
-class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Login')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
