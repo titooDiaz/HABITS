@@ -63,8 +63,6 @@ def login():
 
     return render_template('users/login.html', form=form)
 
-
-
 # Ruta protegida (dashboard)
 @app.route('/dashboard')
 def dashboard():
@@ -144,6 +142,7 @@ def create():
     if request.method == 'POST':
         name = request.form['name']
         description = request.form['description']
+        user_id = session['user_id']
         frequency = request.form['frequency']
         new_task = Task(name=name, description=description, frequency=int(frequency))
         db.session.add(new_task)

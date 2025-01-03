@@ -3,6 +3,8 @@ import os
 from flask import Flask
 import pytz
 from werkzeug.security import generate_password_hash
+from datetime import datetime
+from sqlalchemy.orm import relationship
 
 ########################################################################################
 ##################               DATA BASE                 #############################
@@ -41,14 +43,17 @@ class User(db.Model):
 bogota_tz = pytz.timezone("America/Bogota")
 
 class Task(db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # Llave primaria
-    name = db.Column(db.String(50), nullable=False)  # Campo obligatorio
-    description = db.Column(db.String(120), nullable=False)  # Descripción obligatoria
-    frequency = db.Column(db.Integer, nullable=False)  # Frecuencia obligatoria
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(120), nullable=False)
+    frequency = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(bogota_tz))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = relationship('User', backref='tasks')
 
     def __repr__(self):
         return f"<Task {self.name}>"
+
     
 class TaskDaily(db.Model):
     id = db.Column(db.Integer, primary_key=True)
