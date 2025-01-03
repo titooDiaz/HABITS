@@ -1,63 +1,100 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
-import os
-from flask import Flask, render_template, redirect, url_for
-from itertools import groupby
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from werkzeug.security import generate_password_hash, check_password_hash
+from models import User, db, Task, TaskDaily, app
 import pytz
+import os
+from itertools import groupby
 from datetime import date
-
-
-
-########################################################################################
-##################               DATA BASE                 #############################
-########################################################################################
-
-# Configuración de la aplicación
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'  # Base de datos SQLite
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Inicializar SQLAlchemy
-# Start SQLAlchemy
-db = SQLAlchemy(app)
-
-
-########################################################################################
-##################               MODELS                 ################################
-########################################################################################
-
-# Modelo de base de datos
-# Model of database
-from datetime import datetime
-from sqlalchemy import func
-
-bogota_tz = pytz.timezone("America/Bogota")
-
-class Task(db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # Llave primaria
-    name = db.Column(db.String(50), nullable=False)  # Campo obligatorio
-    description = db.Column(db.String(120), nullable=False)  # Descripción obligatoria
-    frequency = db.Column(db.Integer, nullable=False)  # Frecuencia obligatoria
-    state = db.Colum(db.String(20), value=['ACTIVO', 'INACTIVO', 'PENDIENTE', 'FINALIZADO'])
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(bogota_tz))
-
-    def __repr__(self):
-        return f"<Task {self.name}>"
-    
-class TaskDaily(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    idTask = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
-    task = db.relationship(Task, backref='dailies', lazy=True)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(bogota_tz))
-
-    def __repr__(self):
-        return f"<TaskDaily {self.idTask}>"
-
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Email, EqualTo
+from flask_wtf import FlaskForm
 
 
 ########################################################################################
 ##################                  APP                 ################################
 ########################################################################################
+app.secret_key = "Habits2025"
+
+# users manager
+class RegisterForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Register')
+
+# Ruta de Registro
+from werkzeug.security import generate_password_hash
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        existing_user = User.query.filter_by(username=form.username.data).first()
+        if existing_user:
+            flash("Username already exists. Please choose a different one.", "danger")
+        else:
+            # Encriptar la contraseña
+            hashed_password = generate_password_hash(form.password.data)
+            new_user = User(username=form.username.data, password=hashed_password)
+            db.session.add(new_user)
+            db.session.commit()
+            flash("Registration successful!", "success")
+            return redirect(url_for('login'))  # Redirigir a login después de registrarse
+    return render_template('users/register.html', form=form)
+
+
+# Ruta de inicio de sesión
+from werkzeug.security import check_password_hash
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        
+        print(f"Username: {username}, Password: {password}")
+        
+        user = User.query.filter_by(username=username).first()
+
+        if user:
+            print(f"Usuario encontrado: {user.username}")  # Verifica que el usuario exista en la base de datos
+            print("asd",user.password)
+            if check_password_hash(user.password, password):
+                session['user_id'] = user.id
+                flash('Inicio de sesión exitoso.', 'success')
+                return redirect(url_for('dashboard'))
+            else:
+                flash('Contraseña incorrecta.', 'danger')
+        else:
+            flash('Usuario no encontrado.', 'danger')
+
+    return render_template('users/login.html', form=form)
+
+
+
+# Ruta protegida (dashboard)
+@app.route('/dashboard')
+def dashboard():
+    if 'user_id' not in session:
+        flash('Por favor, inicia sesión para acceder.', 'warning')
+        return redirect(url_for('login'))
+
+    return render_template('users/dashboard.html')
+
+# Ruta para cerrar sesión
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    flash('Has cerrado sesión.', 'info')
+    return redirect(url_for('login'))
+
 
 
 # Ruta principal para listar tareas
