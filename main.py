@@ -12,6 +12,15 @@ from werkzeug.security import generate_password_hash
 # impor forms
 from forms import LoginForm, RegisterForm
 
+# user is login?
+def user_on_login():
+    user_id = session.get('user_id')
+    print('user_id', user_id)
+    if not user_id:
+        flash("Debes iniciar sesión para ver tus tareas.", "danger")
+        return True
+    return False
+
 
 ########################################################################################
 ##################                  APP                 ################################
@@ -66,10 +75,8 @@ def login():
 # Ruta protegida (dashboard)
 @app.route('/dashboard')
 def dashboard():
-    if 'user_id' not in session:
-        flash('Por favor, inicia sesión para acceder.', 'warning')
+    if user_on_login():
         return redirect(url_for('login'))
-
     return render_template('users/dashboard.html')
 
 # Ruta para cerrar sesión
@@ -85,6 +92,9 @@ def logout():
 # Main route to list tasks
 @app.route('/')
 def index():
+    if user_on_login():
+        return redirect(url_for('login'))
+    
     tasks = Task.query.all()
 
     # Agrupar tareas diarias por fecha
@@ -119,9 +129,13 @@ def index():
 
 @app.route("/create_lugar/<int:task_id>", methods=["POST"])
 def create_lugar(task_id):
+    if user_on_login():
+        return redirect(url_for('login'))
     # Obtener la tarea desde la base de datos
     # Get task of Data Base
-    task = Task.query.get(task_id)
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
+    task = user.tasks
     if task:
         # Crear un nuevo TaskDaily relacionado con la tarea
         # Create a new TaskDaily
