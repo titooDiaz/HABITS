@@ -31,7 +31,7 @@
                         <!-- Botón para crear una nueva tarea diaria -->
                         {{ i + 1 + (task.dailies | length)}}
                         <form action="/create_lugar/{{ task.id }}" method="POST" style="display:inline;">
-                            <button type="submit">Hecho? </button>
+                            <button type="submit">Listo! </button>
                         </form>
                     </li>
                 {% endfor %}

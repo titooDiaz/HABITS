@@ -4,6 +4,7 @@ import os
 from flask import Flask, render_template, redirect, url_for
 from itertools import groupby
 import pytz
+from datetime import date
 
 
 
@@ -37,6 +38,7 @@ class Task(db.Model):
     name = db.Column(db.String(50), nullable=False)  # Campo obligatorio
     description = db.Column(db.String(120), nullable=False)  # Descripción obligatoria
     frequency = db.Column(db.Integer, nullable=False)  # Frecuencia obligatoria
+    state = db.Colum(db.String(20), value=['ACTIVO', 'INACTIVO', 'PENDIENTE', 'FINALIZADO'])
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(bogota_tz))
 
     def __repr__(self):
@@ -84,6 +86,11 @@ def index():
         date.strftime("%d/%m/%Y"): dailies for date, dailies in tasks_by_date.items()
     }
 
+    today = date.today()
+    tasks_today = TaskDaily.query.filter(db.func.date(TaskDaily.created_at) == today).all()
+    count_today = len(tasks_today)
+    print(count_today)
+    
     return render_template("index.html", tasks=tasks, tasks_by_date=tasks_by_date_formatted)
 
 
@@ -95,7 +102,7 @@ def create_lugar(task_id):
     # Get task of Data Base
     task = Task.query.get(task_id)
     if task:
-        # Crear un nuevo TaskDaily (lugar) relacionado con la tarea
+        # Crear un nuevo TaskDaily relacionado con la tarea
         # Create a new TaskDaily
         new_task_daily = TaskDaily(idTask=task.id)
         db.session.add(new_task_daily)
