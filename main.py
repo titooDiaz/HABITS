@@ -77,25 +77,8 @@ def login():
 def dashboard():
     if user_on_login():
         return redirect(url_for('login'))
-    return render_template('users/dashboard.html')
-
-# Ruta para cerrar sesión
-@app.route('/logout')
-def logout():
-    session.pop('user_id', None)
-    flash('Has cerrado sesión.', 'info')
-    return redirect(url_for('login'))
-
-
-
-# Ruta principal para listar tareas
-# Main route to list tasks
-@app.route('/')
-def index():
-    if user_on_login():
-        return redirect(url_for('login'))
-    
-    tasks = Task.query.all()
+    user_id = session.get('user_id')
+    tasks = Task.query.filter_by(user_id=user_id).all()
 
     # Agrupar tareas diarias por fecha
     all_dailies = [daily for task in tasks for daily in task.dailies]
@@ -124,6 +107,22 @@ def index():
     
     return render_template("index.html", tasks=tasks, tasks_by_date=tasks_by_date_formatted)
 
+# Ruta para cerrar sesión
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    flash('Has cerrado sesión.', 'info')
+    return redirect(url_for('login'))
+
+
+
+# Ruta principal para listar tareas
+# Main route to list tasks
+@app.route('/')
+def index():
+    if user_on_login():
+        return redirect(url_for('login'))
+
 
 
 
@@ -134,8 +133,7 @@ def create_lugar(task_id):
     # Obtener la tarea desde la base de datos
     # Get task of Data Base
     user_id = session.get('user_id')
-    user = User.query.get(user_id)
-    task = user.tasks
+    task = Task.query.get(task_id)
     if task:
         # Crear un nuevo TaskDaily relacionado con la tarea
         # Create a new TaskDaily
@@ -145,7 +143,7 @@ def create_lugar(task_id):
         
         # Redirigir de vuelta a la página donde se muestran las tareas
         # Redirec home
-        return redirect(url_for("index"))
+        return redirect(url_for("dashboard"))
     return "Tarea no encontrada", 404
 
 
@@ -154,14 +152,15 @@ def create_lugar(task_id):
 @app.route('/create', methods=['GET', 'POST'])
 def create():
     if request.method == 'POST':
+        user_id = session['user_id']
+        
         name = request.form['name']
         description = request.form['description']
-        user_id = session['user_id']
         frequency = request.form['frequency']
-        new_task = Task(name=name, description=description, frequency=int(frequency))
+        new_task = Task(name=name, description=description, frequency=int(frequency), user_id=int(user_id))
         db.session.add(new_task)
         db.session.commit()
-        return redirect(url_for('index'))
+        return redirect(url_for('dashboard'))
     return render_template('create.html')
 
 
@@ -189,7 +188,7 @@ def delete(id):
     
     db.session.delete(task)
     db.session.commit()
-    return redirect(url_for('index'))
+    return redirect(url_for('dashboard'))
 
 
 
