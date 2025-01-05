@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import User, db, Task, TaskDaily, app
+from models import User, db, Task, TaskDaily, app, Groups
 import pytz
 import os
 from itertools import groupby
@@ -10,7 +10,7 @@ from datetime import date
 from werkzeug.security import generate_password_hash
 
 # impor forms
-from forms import LoginForm, RegisterForm
+from forms import LoginForm, RegisterForm, GroupsForm
 
 # user is login?
 def user_on_login():
@@ -46,6 +46,25 @@ def register():
             flash("Registration successful!", "success")
             return redirect(url_for('login'))  # Redirigir a login después de registrarse
     return render_template('users/register.html', form=form)
+
+@app.route('/group/create', methods=['GET', 'POST'])
+def create_group():
+    form = GroupsForm()
+    if form.validate_on_submit():
+        group_name = form.name.data
+
+        from uuid import uuid4
+        codigo_familia = str(uuid4())
+        autor_id = session.get('user_id')
+
+        nueva_familia = Groups(name=group_name, author_id=autor_id, code=codigo_familia)
+        db.session.add(nueva_familia)
+        db.session.commit()
+
+        flash(f"Familia '{group_name}' creada exitosamente. Código: {codigo_familia}", "success")
+        return redirect(url_for('create_group'))
+
+    return render_template('groups/create.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

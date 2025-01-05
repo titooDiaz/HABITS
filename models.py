@@ -5,6 +5,7 @@ import pytz
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 from sqlalchemy.orm import relationship
+from flask_migrate import Migrate
 
 ########################################################################################
 ##################               DATA BASE                 #############################
@@ -22,6 +23,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Inicializar SQLAlchemy
 # Start SQLAlchemy
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 
 ########################################################################################
@@ -33,6 +35,25 @@ db = SQLAlchemy(app)
 from datetime import datetime
 from sqlalchemy import func
 
+
+class Groups(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), nullable=False, unique=True)
+    code = db.Column(db.String(200), nullable=False, unique=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    miembros = db.relationship(
+        'User',
+        secondary='user_group',
+        back_populates='groups'
+    )
+
+    def __init__(self, name, author_id, code):
+        self.name = name
+        self.author_id = author_id
+        self.code = code
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), nullable=False, unique=True)
@@ -41,10 +62,22 @@ class User(db.Model):
     name = db.Column(db.String(150), nullable=True, unique=False)
     last_name = db.Column(db.String(150), nullable=True, unique=False)
 
+    groups = db.relationship(
+        'Groups',
+        secondary='user_group',
+        back_populates='miembros'
+    )
+
     def __init__(self, username, password):
         self.username = username
         self.password = password
 
+
+user_group = db.Table(
+    'user_group',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('group_id', db.Integer, db.ForeignKey('groups.id'), primary_key=True)
+)
 
 bogota_tz = pytz.timezone("America/Bogota")
 
