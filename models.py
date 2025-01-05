@@ -9,6 +9,9 @@ from sqlalchemy.orm import relationship
 ########################################################################################
 ##################               DATA BASE                 #############################
 ########################################################################################
+#flask db init
+#flask db migrate -m "Descripción de los cambios"
+#flask db upgrade
 
 # Configuración de la aplicación
 app = Flask(__name__)
@@ -34,6 +37,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), nullable=False, unique=True)
     password = db.Column(db.String(200), nullable=False)
+    private = db.Column(db.Boolean, nullable=False, default=True)
+    name = db.Column(db.String(150), nullable=True, unique=False)
+    last_name = db.Column(db.String(150), nullable=True, unique=False)
 
     def __init__(self, username, password):
         self.username = username
@@ -49,6 +55,7 @@ class Task(db.Model):
     frequency = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(bogota_tz))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    private = db.Column(db.Boolean, nullable=False, default=True)
     user = relationship('User', backref='tasks')
 
     def __repr__(self):
