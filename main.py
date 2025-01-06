@@ -134,7 +134,9 @@ def dashboard():
         tasks_today_number.append(len(todays_dailies))
     tasks=zip(tasks,tasks_today_number)
     
+    user_id = session.get('user_id')
     context = {
+        "user_id": user_id,
         'tasks_by_date': tasks_by_date_formatted,
         'tasks': tasks,
         'today': today
@@ -225,6 +227,24 @@ def delete(id):
     db.session.commit()
     return redirect(url_for('dashboard'))
 
+
+
+# user menu
+#===========================================================s
+@app.route('/profile/<int:id>', endpoint='profile')
+def profile(id):
+    user_id = session.get('user_id')
+    context = {
+        "user_id": user_id,
+    }
+    if id == user_id:
+        return render_template('users/profile.html', **context)
+    
+    context = {
+        
+    }
+    return render_template('tasks/edit.html', **context)
+#===========================================================
 
 
 # Punto de entrada
