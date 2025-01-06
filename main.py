@@ -198,7 +198,7 @@ def create():
         db.session.add(new_task)
         db.session.commit()
         return redirect(url_for('dashboard'))
-    return render_template('create.html')
+    return render_template('tasks/create.html')
 
 
 # Ruta para editar una tarea existente
@@ -212,7 +212,7 @@ def edit(id):
         task.frequency = request.form['frequency']
         db.session.commit()
         return redirect(url_for('index'))
-    return render_template('edit.html', task=task)
+    return render_template('tasks/edit.html', task=task)
 
 
 # Ruta para eliminar una tarea
