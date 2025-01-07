@@ -244,6 +244,22 @@ def profile(id):
         
     }
     return render_template('tasks/edit.html', **context)
+
+@app.route('/groups', endpoint='groups')
+def groups():
+    user_id = session.get('user_id')
+    context = {
+        "user_id": user_id,
+    }
+    return render_template('groups/index.html', **context)
+
+@app.route('/settings', endpoint='settings')
+def settings():
+    user_id = session.get('user_id')
+    context = {
+        "user_id": user_id,
+    }
+    return render_template('users/settings.html', **context)
 #===========================================================
 
 
