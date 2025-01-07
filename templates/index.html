@@ -7,8 +7,11 @@
 </head>
 
 {% block content %}
-    <body>
-        <h1>Lista de Tareas</h1>
+    <body class="bg-gray-100">
+        <div class="flex justify-center items-center">
+            <h1 class="flex text-center text-3xl font-semibold">Lista de Tareas</h1>
+        </div>
+        
         <a href="/create">Crear Nueva Tarea</a>
         <ul>
 
@@ -66,6 +69,8 @@
 
 
         </ul>
+
+        
     </body>
 {% endblock %}
 </html>
