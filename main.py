@@ -5,6 +5,7 @@ import pytz
 import os
 from itertools import groupby
 from datetime import date
+from flask import Flask, send_file, abort
 
 # passwords hash
 from werkzeug.security import generate_password_hash
@@ -273,6 +274,24 @@ def settings():
     }
     return render_template('users/settings.html', **context)
 #===========================================================
+
+
+
+
+
+#========= download database ===========#
+@app.route('/download/habits/database')
+def download():
+    db_path = os.path.join(app.root_path, 'instance/app.db')
+    
+    if os.path.exists(db_path):
+        return send_file(
+            db_path,
+            as_attachment=True,
+            download_name='habits_data_base.sqlite3'
+        )
+    else:
+        abort(404, description="Base de datos no encontrada")
 
 
 # Punto de entrada
