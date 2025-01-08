@@ -4,17 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../../static/LOGO.svg"/>
+    <link rel="stylesheet" href="../static/css/bg.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>{% block title %}Habits{% endblock %}</title>
 </head>
-<body class="bg-gray-200 dark:bg-gray-400">
-    <nav class="m-2">
+<body>
+    <nav>
         {% include 'nav.html' %}
     </nav>
 
-    <main class="mt-4">
+    <main>
         {% block content %}
         {% endblock %}
     </main> 
+
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+
 </body>
 </html>

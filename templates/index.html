@@ -8,71 +8,68 @@
 
 {% block content %}
         <div class="flex justify-center items-center">
-            <h1 class="flex text-center text-3xl font-semibold">Lista de Tareas</h1>
+            <h1 class="flex text-center text-5xl font-bold m-6 mb-8">Bienvenido!</h1>
         </div>
         
         <ul>
             {% if tasks %}
-                {% for task, number, total in tasks %}
-                    <div class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700">
-                        <h5 class="mb-3 text-base font-semibold text-gray-900 md:text-xl dark:text-white">
-                            {{ task.name }}
-                        </h5>
-                        <p class="text-sm font-normal text-gray-500 dark:text-gray-400"><span class="font-bold">Frecuencia: </span>{{ task.frequency }}</p>
-                        <p class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ task.description }}</p>
-                        
-                        <ul class="my-4 space-y-3">
-                            {% for i in range(task.frequency - (number)) %}
-                                <li>
-                                    <form action="/create_lugar/{{ task.id }}" method="POST" style="display:inline;">
-                                        <button type="submit" class="flex w-full items-center p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
-                                            <span class="flex-1 ms-3 whitespace-nowrap">Completado!</span>
-                                            <span class="inline-flex items-center justify-center px-2 py-0.5 ms-3 text-xs font-medium text-gray-500 bg-gray-200 rounded dark:bg-gray-700 dark:text-gray-400">{{ i + 1 + (task.dailies | length)}}</span>
-                                        </button>            
-                                    </form>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                        <div class="flex justify-center items-center">
-                            <div class="relative w-48 h-48 rounded-full bg-gradient-to-tl from-blue-500 via-green-500 to-red-500">
-                                <div 
-                                    class="absolute top-0 left-0 w-full h-full rounded-full" 
-                                    style="background: conic-gradient(
-                                        #f6863b 0 {{ total.0 }}%, /* azul: porcentaje dinámico */
-                                        #f43f5e {{ total.0 }}% 100% /* rojo: restante */
-                                    );">
-                                </div>
-                                <!-- Imagen en el centro -->
-                                <div class="absolute inset-4 bg-white rounded-full flex items-center justify-center">
-                                    <img src="../static/LOGO.svg" alt="Imagen central" class="rounded-full w-16 h-16">
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center m-4">
+                    {% for task, number, total in tasks %}
+                        <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700">
+                            <h5 class="mb-3 text-base font-semibold text-gray-900 md:text-xl dark:text-white">
+                                {{ task.name }}
+                            </h5>
+                            <p class="text-sm font-normal text-gray-500 dark:text-gray-400"><span class="font-bold">Frecuencia: </span>{{ task.frequency }}</p>
+                            <p class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ task.description }}</p>
+                            
+                            <ul class="my-4 space-y-3">
+                                {% for i in range(task.frequency - (number)) %}
+                                    <li>
+                                        <form action="/create_lugar/{{ task.id }}" method="POST" style="display:inline;">
+                                            <button type="submit" class="flex w-full items-center p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
+                                                <span class="flex-1 ms-3 whitespace-nowrap">Completado!</span>
+                                                <span class="inline-flex items-center justify-center px-2 py-0.5 ms-3 text-xs font-medium text-gray-500 bg-gray-200 rounded dark:bg-gray-700 dark:text-gray-400">{{ i + 1 + (task.dailies | length)}}</span>
+                                            </button>            
+                                        </form>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="flex justify-center items-center">
+                                <div class="relative w-48 h-48 rounded-full bg-gradient-to-tl from-blue-500 via-green-500 to-red-500">
+                                    <div 
+                                        class="absolute top-0 left-0 w-full h-full rounded-full" 
+                                        style="background: conic-gradient(
+                                            #f6863b 0 {{ total.0 }}%, /* azul: porcentaje dinámico */
+                                            #f43f5e {{ total.0 }}% 100% /* rojo: restante */
+                                        );">
+                                    </div>
                                 </div>
                             </div>
+                            
+                            <div>
+                                <div class="flex text-orange-500 font-bold text-sm">{{ total.0 }}% Exitoso</div>
+                                <div class="flex text-red-500 font-bold text-sm">{{ total.1 }}% Fallado</div>
+                            </div>
+                            
+                            <div>
+                                <a href="#" class="inline-flex items-center text-xs font-normal text-gray-500 hover:underline dark:text-gray-400">
+                                <svg class="w-3 h-3 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.529 7.988a2.502 2.502 0 0 1 5 .191A2.441 2.441 0 0 1 10 10.582V12m-.01 3.008H10M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                </svg>
+                                Como funciona?</a>
+                            </div>
+                
+                            <div>
+                                <a class="inline-flex items-center text-xs font-normal text-gray-500 hover:underline dark:text-gray-400" href="/edit/{{ task.id }}">Editar</a> 
+                                <span class="text-gray-400">|</span>
+                                <form class="inline-flex items-center text-xs font-normal text-gray-500 hover:underline dark:text-gray-400" action="/delete/{{ task.id }}" method="POST" style="display:inline;">
+                                    <button type="submit">Eliminar</button>
+                                </form>
+                            </div>
+                            
                         </div>
-                        
-                        <div>
-                            <div class="flex text-orange-500 font-bold text-sm">{{ total.0 }}% Exitoso</div>
-                            <div class="flex text-red-500 font-bold text-sm">{{ total.1 }}% Fallado</div>
-                        </div>
-                        
-                        <div>
-                            <a href="#" class="inline-flex items-center text-xs font-normal text-gray-500 hover:underline dark:text-gray-400">
-                            <svg class="w-3 h-3 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.529 7.988a2.502 2.502 0 0 1 5 .191A2.441 2.441 0 0 1 10 10.582V12m-.01 3.008H10M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                            </svg>
-                            Como funciona?</a>
-                        </div>
-
-                        <div>
-                            <a class="inline-flex items-center text-xs font-normal text-gray-500 hover:underline dark:text-gray-400" href="/edit/{{ task.id }}">Editar</a> 
-                            <span class="text-gray-400">|</span>
-                            <form class="inline-flex items-center text-xs font-normal text-gray-500 hover:underline dark:text-gray-400" action="/delete/{{ task.id }}" method="POST" style="display:inline;">
-                                <button type="submit">Eliminar</button>
-                            </form>
-                        </div>
-                        
-                    </div>
-    
-                {% endfor %}
+                    {% endfor %}
+                </div>
             {% else %}
                 <p>No hay tareas disponibles.</p>
             {% endif %}
