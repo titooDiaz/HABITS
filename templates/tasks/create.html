@@ -1,11 +1,12 @@
+{% extends "base.html" %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Tarea</title>
+    {% block title %}Crear Tarea{% endblock %}
 </head>
-<body>
+
+{% block content %}
     <h1>Crear Nueva Tarea</h1>
     <form action="/create" method="POST">
         <label for="name">Nombre:</label>
@@ -19,6 +20,5 @@
         <br>
         <button type="submit">Crear</button>
     </form>
-    <a href="/">Volver</a>
-</body>
-</html>
+    <a href="/dashboard">Volver</a>
+{% endblock %}

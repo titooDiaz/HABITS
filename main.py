@@ -119,8 +119,6 @@ def dashboard():
     today = date.today()
     tasks_today = TaskDaily.query.filter(db.func.date(TaskDaily.created_at) == today).all()
     count_today = len(tasks_today)
-    print(count_today)
-    
     
     # Consulta las tareas del usuario
     tasks = Task.query.filter_by(user_id=user_id).all()
@@ -128,12 +126,26 @@ def dashboard():
     # Filtrar las tareas diarias de cada tarea que sean solo de hoy
     tasks_today = []
     tasks_today_number =[]
+    # total activity
+    total = []
     
+    # count activity rest for today
     for task in tasks:
         todays_dailies = [daily for daily in task.dailies if daily.created_at.date() == today]
         tasks_today_number.append(len(todays_dailies))
-    tasks=zip(tasks,tasks_today_number)
-    
+        
+        total_dailies = len(task.dailies)
+        days_passed = (date.today() - task.created_at.date()).days
+        activity_total = (days_passed+1) * int(task.frequency)
+        average=int((total_dailies*100)/activity_total)
+        rest = 100-average
+        print(average)
+        print(rest)
+        total.append([average,rest])
+        
+    tasks=zip(tasks,tasks_today_number,total)
+
+
     user_id = session.get('user_id')
     context = {
         "user_id": user_id,
