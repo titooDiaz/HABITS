@@ -24,7 +24,7 @@ La disciplina es la clave del éxito personal y profesional. Con esta herramient
 ## Instalación 🚀  
 
 ### Requisitos  
-- Python 3.8 o superior  
+- Python 3.9 o superior  
 - pip (gestor de paquetes de Python)  
 
 ### Pasos  
@@ -43,11 +43,17 @@ La disciplina es la clave del éxito personal y profesional. Con esta herramient
    pip install -r requirements.txt  
    ```  
 4. Configura el archivo `.env` (si usas variables de entorno).  
-5. Ejecuta la aplicación:  
+5. Ejecuta la aplicación:
+   modo desarrollador:
    ```bash  
-   flask run  
+   python main.py
    ```  
-6. Accede a la aplicación en tu navegador: [http://localhost:5000](http://localhost:5000)  
+   modo produccion:
+   modo desarrollador
+   ```bash  
+   gunicorn -w 4 -b 0.0.0.0:8000 main:app
+   ``` 
+6. Accede a la aplicación en tu navegador: [http://localhost:8000](http://localhost:8000)  
 
 ## Cómo Contribuir 🤝  
 ¡Esta aplicación es para todos! Si deseas mejorarla, sigue estos pasos:  
