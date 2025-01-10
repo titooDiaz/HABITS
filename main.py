@@ -6,6 +6,7 @@ import os
 from itertools import groupby
 from datetime import date
 from flask import Flask, send_file, abort
+import sys
 
 # passwords hash
 from werkzeug.security import generate_password_hash
@@ -130,10 +131,13 @@ def dashboard():
     tasks_today_number =[]
     # total activity
     total = []
+    # total_rest
+    total_rest = 0
     
     # count activity rest for today
     for task in tasks:
         todays_dailies = [daily for daily in task.dailies if daily.created_at.date() == today]
+        total_rest += task.frequency - len(todays_dailies)
         tasks_today_number.append(len(todays_dailies))
         
         total_dailies = len(task.dailies)
@@ -141,8 +145,6 @@ def dashboard():
         activity_total = (days_passed+1) * int(task.frequency)
         average=int((total_dailies*100)/activity_total)
         rest = 100-average
-        print(average)
-        print(rest)
         total.append([average,rest])
         
     tasks=zip(tasks,tasks_today_number,total)
@@ -155,6 +157,7 @@ def dashboard():
         'tasks': tasks,
         'today': today,
         'user': user,
+        'total_rest': total_rest,
     }
     return render_template("index.html", **context)
 
@@ -304,4 +307,9 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         
-    app.run(host='0.0.0.0', port=port)
+    if "gunicorn" in sys.argv[0]:
+        print("Ejecutando en modo producción con Gunicorn.")
+    else:
+        # Modo desarrollo
+        print("Ejecutando en modo desarrollo.")
+        app.run(host="0.0.0.0", port=8000, debug=True)

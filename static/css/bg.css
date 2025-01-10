@@ -43,16 +43,6 @@
 /*
 -- Start BackGround Animation 
 */
-.area {
-    background: linear-gradient(to left, #ffa44e, #d89264);
-    position: fixed; /* El fondo siempre está visible, incluso al hacer scroll */
-    width: 100%;
-    height: 100%; /* Cubre toda la pantalla */
-    top: 0;
-    left: 0;
-    z-index: -1; /* Se coloca detrás del contenido */
-    overflow: hidden; /* Oculta cualquier desbordamiento innecesario */
-}
 
 .circles {
 	position: absolute;
