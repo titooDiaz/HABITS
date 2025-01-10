@@ -96,6 +96,7 @@ def dashboard():
     if user_on_login():
         return redirect(url_for('login'))
     user_id = session.get('user_id')
+    user = User.query.get(user_id)
     
     today = date.today()
     print(today)
@@ -152,7 +153,8 @@ def dashboard():
         "user_id": user_id,
         'tasks_by_date': tasks_by_date_formatted,
         'tasks': tasks,
-        'today': today
+        'today': today,
+        'user': user,
     }
     return render_template("index.html", **context)
 
