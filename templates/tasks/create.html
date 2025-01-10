@@ -7,18 +7,82 @@
 </head>
 
 {% block content %}
-    <h1>Crear Nueva Tarea</h1>
-    <form action="/create" method="POST">
-        <label for="name">Nombre:</label>
-        <input type="text" name="name" id="name" required>
-        <br>
-        <label for="description">Descripción:</label>
-        <input type="text" name="description" id="description" required>
-        <br>
-        <label for="frequency">Frecuencia Diaria:</label>
-        <input type="number" name="frequency" id="frequency" required>
-        <br>
-        <button type="submit">Crear</button>
-    </form>
-    <a href="/dashboard">Volver</a>
+
+<div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 px-6">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <img class="mx-auto h-10 w-auto" src="../../static/LOGO.svg" alt="Workflow">
+    </div>
+
+
+    <div class="mt-4 mb-4 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow rounded-lg sm:px-10">
+            <form action="/create" method="POST">
+                <div>
+                    <label for="name" class="block text-sm font-medium leading-5  text-gray-700">Nombre de la actividad</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input id="name" name="name" placeholder="Rutina de cada dia!" type="text" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-orange focus:border-orange-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label for="description" class="block text-sm font-medium leading-5 text-gray-700">descripcion</label>
+                    <div class="mt-1 rounded-md shadow-sm">
+                        <input id="description" name="description" type="text" placeholder="Cada vez que me levante seguire ... y luego ..." required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-orange focus:border-orange-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label for="frequency" class="block text-sm font-medium leading-5 text-gray-700">Frecuencia</label>
+                    <div class="mt-1 rounded-md shadow-sm">
+                        <input id="frequency" min="1" name="frequency" type="number" placeholder="1" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-orange focus:border-orange-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <span class="block w-full rounded-md shadow-sm">
+                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
+                    Crear!
+                    </button>
+                </span>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="w-full h-full flex justify-center items-center">
+        <h1 id="typewriter" class="text-4xl font-bold dark:text-white"></h1>
+    </div>
+    <script>
+        const words = ["Crea una nueva tarea!", "Hazlo sencillo, hazlo constante.", "Hazlo por ti, no por los demás.", "Un minuto hoy es mejor que nada."];
+        let i = 0;
+        let j = 0;
+        let currentWord = "";
+        let isDeleting = false;
+        
+        function type() {
+          currentWord = words[i];
+          if (isDeleting) {
+            document.getElementById("typewriter").textContent = currentWord.substring(0, j-1);
+            j--;
+            if (j == 0) {
+              isDeleting = false;
+              i++;
+              if (i == words.length) {
+                i = 0;
+              }
+            }
+          } else {
+            document.getElementById("typewriter").textContent = currentWord.substring(0, j+1);
+            j++;
+            if (j == currentWord.length) {
+              isDeleting = true;
+            }
+          }
+          setTimeout(type, 100);
+        }
+        
+        type();
+    </script>
+</div>
 {% endblock %}

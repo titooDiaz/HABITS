@@ -31,7 +31,7 @@ La disciplina es la clave del éxito personal y profesional. Con esta herramient
 1. Clona este repositorio:  
    ```bash  
    git clone https://github.com/titooDiaz/HABITS.git
-   cd nombre-repo  
+   cd HABITS
    ```  
 2. Crea un entorno virtual:  
    ```bash  
