@@ -16,106 +16,49 @@
     
 <body>
 
-    <div class="container mx-auto my-10">
-        <h1 class="text-center text-3xl font-semibold mb-4">
-              To Do List
-          </h1>
-        <div class="md:w-1/2 mx-auto">
-            {{groups_creator}}
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <form id="todo-form">
-                    <div class="flex mb-4">
-                        <input type="text" 
-                               class="w-full px-4 py-2 mr-2 rounded-lg
-                             border-gray-300 focus:outline-none
-                              focus:border-blue-500" id="todo-input" 
-                               placeholder="Add new task" required>
-                        <button class="bg-blue-500 hover:bg-blue-700 
-                            text-white font-bold py-2 px-4 rounded">
-                              Add
-                          </button>
+    <div class="mx-auto mt-24 mb-20 max-w-6xl text-center p-6">
+        <h2 class="mb-12 text-center text-4xl font-extrabold text-gray-900 dark:text-gray-200 sm:text-5xl">
+            Familias creadas por ti
+        </h2>
+        <div class="flex flex-wrap justify-center gap-6 mb-4">
+            <a class="relative" href="#">
+                <span class="absolute top-0 left-0 mt-1 ml-1 h-full w-full rounded bg-black"></span>
+                <span class="fold-bold relative inline-block h-full w-full rounded border-2 border-black bg-orange-400 px-3 py-1 text-base font-bold text-black transition duration-100 hover:bg-orange-600 hover:text-white">Agrega una nueva!</span>
+            </a>
+        </div>
+        <div class="gr mx-auto max-w-3xl items-stretch space-y-4 text-left sm:flex sm:space-y-0 sm:space-x-8 sm:text-center">
+            {% for group in groups_creator %}
+                <div class="flex w-full items-center rounded-xl border border-black border-opacity-10 px-4 py-6 text-black duration-200 hover:border-opacity-0 hover:no-underline hover:shadow-lg dark:text-white dark:hover:bg-gray-700 sm:flex-col sm:hover:shadow-2xl bg-gray-100 dark:bg-gray-800">
+                    <div>
+                        <div class="font-semibold text-black dark:text-white sm:mt-4 sm:mb-2 text-4xl">{{group.name}}</div>
+                        <div class="text-sm opacity-75">{{group.description}}
+                        </div>
                     </div>
-                </form>
-                <ul id="todo-list">
-                    <!-- Tasks will be added here dynamically -->
-                </ul>
-            </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full overflow-hidden transition-all duration-300 hover:shadow-3xl animate-fade-in">
+                        <div class="p-6">
+                            <h2 class="text-2xl font-bold text-orange-800 dark:text-white mb-4">Miembros del grupo</h2>
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-4 p-3 bg-orange-50 dark:bg-gray-700 rounded-lg transition-all duration-300 hover:bg-orange-100 dark:hover:bg-gray-600">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-orange-800 dark:text-white">Persona nombre</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-300">persona descripciopn</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-6 py-4 bg-orange-100 dark:bg-gray-700 flex justify-between items-center">
+                            <span class="text-sm text-orange-800 dark:text-gray-300">3 team members</span>
+                            <button class="bg-orange-800 text-white px-4 py-2 rounded-lg hover:bg-orange-900 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-orange-800 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                                Invitar persona
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
 
-    <script>
-        // Function to add a new task
-        function addTask(task) {
-            const todoList = document.getElementById("todo-list");
-            const li = document.createElement("li");
-            li.className = 
-              "border-b border-gray-200 flex items-center justify-between py-4";
-            li.innerHTML = `
-                <label class="flex items-center">
-                    <input type="checkbox" class="mr-2">
-                    <span>${task}</span>
-                </label>
-                <div>
-                    <button class="text-red-500 hover:text-red-700
-                     mr-2 delete-btn">Delete</button>
-                    <button class="text-blue-500
-                     hover:text-blue-700 edit-btn">Edit</button>
-                </div>
-            `;
-            todoList.appendChild(li);
-
-            // Add event listener to the checkbox
-            const checkbox = li.querySelector('input[type="checkbox"]');
-            checkbox.addEventListener('change', function () {
-                const taskText = this.nextElementSibling;
-                if (this.checked) {
-                    taskText.classList.add('completed');
-                } else {
-                    taskText.classList.remove('completed');
-                }
-            });
-        }
-
-        // Event listener for form submission
-        document.getElementById("todo-form").addEventListener("submit",
-            function (event) {
-                event.preventDefault();
-                const taskInput = document.getElementById("todo-input");
-                const task = taskInput.value.trim();
-                if (task !== "") {
-                    addTask(task);
-                    taskInput.value = "";
-                }
-            });
-
-        // Event listener for delete button click
-        document.getElementById("todo-list")
-          .addEventListener("click",
-            function (event) {
-                if (event.target.classList.contains("delete-btn")) {
-                    event.target.parentElement.parentElement.remove();
-                }
-            });
-
-        // Event listener for edit button click
-        document.getElementById("todo-list")
-          .addEventListener("click",
-            function (event) {
-                if (event.target.classList.contains("edit-btn")) {
-                    const taskText = event.target.
-                        parentElement.parentElement.querySelector("span");
-                    const newText = 
-                          prompt("Enter new task", taskText.textContent);
-                    if (newText !== null) {
-                        taskText.textContent = newText.trim();
-                    }
-                }
-            });
-
-        // Add default tasks
-        const defaultTasks = ["HTML", "CSS", "JS", "Bootstrap"];
-        defaultTasks.forEach(task => addTask(task));
-    </script>
 </body>
 {% endblock %}
 </html>

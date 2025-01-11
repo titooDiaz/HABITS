@@ -270,7 +270,7 @@ def groups():
     groups_creator = Groups.query.filter_by(author_id=user_id).all()
     context = {
         "user_id": user_id,
-        'groups_creator': groups_creator
+        "groups_creator": groups_creator
     }
     return render_template('groups/index.html', **context)
 
