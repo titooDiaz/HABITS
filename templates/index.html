@@ -11,12 +11,14 @@
     <ul>
 
         {% if tasks %}
-            {% for task in tasks %}
+            {% for task, number in tasks %}
                 <div>
+                    {{task}}
                     <h2>{{ task.name }}</h2>
                     <p>{{ task.description }}</p>
                     <p><strong>Frecuencia:</strong> {{ task.frequency }}</p>
-                    <p><strong>Creado el:</strong> {{ task.created_at }}</p>
+                    <p><strong>Creado el:</strong> {{ task.created_at.date() }}</p>
+                    {{(task.dailies) | length}}
 
                     <br>
 
@@ -26,7 +28,7 @@
                     </form>
                 </div>
 
-                {% for i in range(task.frequency - (task.dailies | length)) %}
+                {% for i in range(task.frequency - (number)) %}
                     <li>
                         <!-- Botón para crear una nueva tarea diaria -->
                         {{ i + 1 + (task.dailies | length)}}

@@ -78,15 +78,14 @@ def dashboard():
     if user_on_login():
         return redirect(url_for('login'))
     user_id = session.get('user_id')
-    tasks = Task.query.filter_by(user_id=user_id).all()
+    
+    today = date.today()
+    print(today)
+
+    tasks=Task.query.filter_by(user_id=user_id).all()
 
     # Agrupar tareas diarias por fecha
     all_dailies = [daily for task in tasks for daily in task.dailies]
-
-    # Ajustar las fechas a la zona horaria de Bogotá
-    bogota_tz = pytz.timezone("America/Bogota")
-    for daily in all_dailies:
-        daily.created_at = daily.created_at.astimezone(bogota_tz)
 
     # Ordenar y agrupar las tareas por fecha
     sorted_dailies = sorted(all_dailies, key=lambda x: x.created_at.date())
@@ -105,7 +104,25 @@ def dashboard():
     count_today = len(tasks_today)
     print(count_today)
     
-    return render_template("index.html", tasks=tasks, tasks_by_date=tasks_by_date_formatted)
+    
+    # Consulta las tareas del usuario
+    tasks = Task.query.filter_by(user_id=user_id).all()
+
+    # Filtrar las tareas diarias de cada tarea que sean solo de hoy
+    tasks_today = []
+    tasks_today_number =[]
+    
+    for task in tasks:
+        todays_dailies = [daily for daily in task.dailies if daily.created_at.date() == today]
+        tasks_today_number.append(len(todays_dailies))
+    tasks=zip(tasks,tasks_today_number)
+    
+    context = {
+        'tasks_by_date': tasks_by_date_formatted,
+        'tasks': tasks,
+        'today': today
+    }
+    return render_template("index.html", **context)
 
 # Ruta para cerrar sesión
 @app.route('/logout')
