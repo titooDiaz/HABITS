@@ -139,6 +139,7 @@ def logout():
 def index():
     if user_on_login():
         return redirect(url_for('login'))
+    return redirect(url_for('login'))
 
 
 
